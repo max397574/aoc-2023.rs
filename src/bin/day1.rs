@@ -1,6 +1,8 @@
+use bstr::ByteSlice;
+
 fn part_1(input: &str) -> u32 {
     let mut sum = 0;
-    for line in input.as_bytes()[..input.len() - 1].split(|c| c == &b'\n') {
+    for line in input.as_bytes().lines() {
         let mut line_iter = line.iter();
         let first = line_iter.find(|c| *c <= &b'9').unwrap();
         let last = line_iter.rfind(|c| *c <= &b'9').unwrap_or(first) - b'0';
