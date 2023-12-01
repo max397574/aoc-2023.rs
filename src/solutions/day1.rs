@@ -2,14 +2,18 @@ use bstr::ByteSlice;
 use std::fmt::Display;
 
 pub fn part_1(input: &str) -> impl Display {
-    let mut sum: u32 = 0;
+    let mut sum1: u32 = 0;
+    let mut sum2: u32 = 0;
+    const OFFSET_PER_LINE: u32 = 11 * b'0' as u32;
+    let mut line_count = 0;
     for line in input.as_bytes().lines() {
+        line_count += 1;
         let mut line_iter = line.iter();
         let first = line_iter.find(|c| *c <= &b'9').unwrap();
-        let last = line_iter.rfind(|c| *c <= &b'9').unwrap_or(first) - b'0';
-        sum += ((first - b'0') * 10 + last) as u32
+        sum2 += *line_iter.rfind(|c| *c <= &b'9').unwrap_or(first) as u32;
+        sum1 += *first as u32;
     }
-    sum
+    sum1 * 10 + sum2 - line_count * OFFSET_PER_LINE
 }
 pub fn part_2(input: &str) -> impl Display {
     let options: [&str; 9] = [
