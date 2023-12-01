@@ -1,12 +1,12 @@
 fn part_1(input: &str) -> u32 {
-    input
-        .lines()
-        .map(|line| {
-            let first = line.chars().find(|c| c.is_ascii_digit()).unwrap() as u32 - 48;
-            let last = line.chars().rfind(|c| c.is_ascii_digit()).unwrap() as u32 - 48;
-            first * 10 + last
-        })
-        .sum()
+    let mut sum = 0;
+    for line in input.as_bytes()[..input.len() - 1].split(|c| c == &b'\n') {
+        let mut line_iter = line.iter();
+        let first = line_iter.find(|c| *c <= &b'9').unwrap();
+        let last = line_iter.rfind(|c| *c <= &b'9').unwrap_or(first) - b'0';
+        sum += ((first - b'0') * 10 + last) as u32
+    }
+    sum
 }
 fn part_2(input: &str) -> u32 {
     let options: [&str; 9] = [
