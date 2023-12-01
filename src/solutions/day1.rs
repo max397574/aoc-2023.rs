@@ -80,6 +80,6 @@ zoneight234
     }
     #[test]
     fn part2() {
-        assert_eq!(part_1(INPUT2).to_string(), String::from("0"))
+        assert_eq!(part_2(INPUT2).to_string(), String::from("281"))
     }
 }
