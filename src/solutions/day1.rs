@@ -16,7 +16,7 @@ pub fn part_1(input: &str) -> impl Display {
     sum1 * 10 + sum2 - line_count * OFFSET_PER_LINE
 }
 pub fn part_2(input: &str) -> impl Display {
-    let options: [&[u8]; 9] = [
+    const OPTIONS: [&[u8]; 9] = [
         b"one", b"two", b"three", b"four", b"five", b"six", b"seven", b"eight", b"nine",
     ];
     input
@@ -30,7 +30,10 @@ pub fn part_2(input: &str) -> impl Display {
                     if char <= &b'9' {
                         return Some(char - b'0');
                     }
-                    for (index, option) in options.iter().enumerate() {
+                    if *char > b'f' && *char < b'n' {
+                        return None;
+                    }
+                    for (index, option) in OPTIONS.iter().enumerate() {
                         if char == &option[1] && line[idx..].starts_with(option) {
                             return Some((index + 1) as u8);
                         }
@@ -46,7 +49,11 @@ pub fn part_2(input: &str) -> impl Display {
                     if char <= &b'9' {
                         return Some(char - b'0');
                     }
-                    for (index, option) in options.iter().enumerate() {
+                    if (*char > b'e' && *char < b'n') || (*char < b'e' && *char > b'9') {
+                        return None;
+                    }
+
+                    for (index, option) in OPTIONS.iter().enumerate() {
                         if char == option.iter().last().unwrap() && line[..=idx].ends_with(option) {
                             return Some((index + 1) as u8);
                         }
