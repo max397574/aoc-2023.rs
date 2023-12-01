@@ -16,50 +16,45 @@ pub fn part_1(input: &str) -> impl Display {
     sum1 * 10 + sum2 - line_count * OFFSET_PER_LINE
 }
 pub fn part_2(input: &str) -> impl Display {
-    let options: [&str; 9] = [
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    let options: [&[u8]; 9] = [
+        b"one", b"two", b"three", b"four", b"five", b"six", b"seven", b"eight", b"nine",
     ];
     input
+        .as_bytes()
         .lines()
         .map(|line| {
-            let first: u32 = line
-                .char_indices()
+            let first: u8 = line
+                .iter()
+                .enumerate()
                 .find_map(|(idx, char)| {
-                    match char {
-                        '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
-                            return Some(char as u32 - 48);
-                        }
-                        _ => {}
+                    if char <= &b'9' {
+                        return Some(char - b'0');
                     }
                     for (index, option) in options.iter().enumerate() {
-                        if char == option.chars().next().unwrap() && line[idx..].starts_with(option)
-                        {
-                            return Some((index + 1) as u32);
+                        if char == &option[1] && line[idx..].starts_with(option) {
+                            return Some((index + 1) as u8);
                         }
                     }
                     None
                 })
                 .unwrap();
-            let last: u32 = line
-                .char_indices()
+            let last: u8 = line
+                .iter()
                 .rev()
+                .enumerate()
                 .find_map(|(idx, char)| {
-                    match char {
-                        '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
-                            return Some(char as u32 - 48);
-                        }
-                        _ => {}
+                    if char <= &b'9' {
+                        return Some(char - b'0');
                     }
                     for (index, option) in options.iter().enumerate() {
-                        if char == option.chars().last().unwrap() && line[..=idx].ends_with(option)
-                        {
-                            return Some((index + 1) as u32);
+                        if char == option.iter().last().unwrap() && line[..=idx].ends_with(option) {
+                            return Some((index + 1) as u8);
                         }
                     }
                     None
                 })
                 .unwrap();
-            first * 10 + last
+            (first * 10 + last) as u32
         })
         .sum::<u32>()
 }
