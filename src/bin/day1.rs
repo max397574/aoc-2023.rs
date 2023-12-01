@@ -9,118 +9,47 @@ fn part_1(input: &str) -> u32 {
         .sum()
 }
 fn part_2(input: &str) -> u32 {
+    let options: [&str; 9] = [
+        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    ];
     input
         .lines()
         .map(|line| {
             let first: u32 = line
                 .char_indices()
-                .find_map(|(idx, char)| match char {
-                    '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => Some(char as u32 - 48),
-                    'o' => {
-                        if line[idx..].starts_with("one") {
-                            Some(1)
-                        } else {
-                            None
+                .find_map(|(idx, char)| {
+                    match char {
+                        '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
+                            return Some(char as u32 - 48);
+                        }
+                        _ => {}
+                    }
+                    for (index, option) in options.iter().enumerate() {
+                        if char == option.chars().next().unwrap() && line[idx..].starts_with(option)
+                        {
+                            return Some((index + 1) as u32);
                         }
                     }
-                    't' => {
-                        if line[idx..].starts_with("two") {
-                            Some(2)
-                        } else if line[idx..].starts_with("three") {
-                            Some(3)
-                        } else {
-                            None
-                        }
-                    }
-                    'f' => {
-                        if line[idx..].starts_with("four") {
-                            Some(4)
-                        } else if line[idx..].starts_with("five") {
-                            Some(5)
-                        } else {
-                            None
-                        }
-                    }
-                    's' => {
-                        if line[idx..].starts_with("six") {
-                            Some(6)
-                        } else if line[idx..].starts_with("seven") {
-                            Some(7)
-                        } else {
-                            None
-                        }
-                    }
-                    'e' => {
-                        if line[idx..].starts_with("eight") {
-                            Some(8)
-                        } else {
-                            None
-                        }
-                    }
-                    'n' => {
-                        if line[idx..].starts_with("nine") {
-                            Some(9)
-                        } else {
-                            None
-                        }
-                    }
-                    _ => None,
+                    None
                 })
                 .unwrap();
             let last: u32 = line
                 .char_indices()
                 .rev()
-                .find_map(|(idx, char)| match char {
-                    '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => Some(char as u32 - 48),
-                    'e' => {
-                        if line[..=idx].ends_with("one") {
-                            Some(1)
-                        } else if line[..=idx].ends_with("three") {
-                            Some(3)
-                        } else if line[..=idx].ends_with("five") {
-                            Some(5)
-                        } else if line[..=idx].ends_with("nine") {
-                            Some(9)
-                        } else {
-                            None
+                .find_map(|(idx, char)| {
+                    match char {
+                        '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
+                            return Some(char as u32 - 48);
+                        }
+                        _ => {}
+                    }
+                    for (index, option) in options.iter().enumerate() {
+                        if char == option.chars().last().unwrap() && line[..=idx].ends_with(option)
+                        {
+                            return Some((index + 1) as u32);
                         }
                     }
-                    'o' => {
-                        if line[..=idx].ends_with("two") {
-                            Some(2)
-                        } else {
-                            None
-                        }
-                    }
-                    'r' => {
-                        if line[..=idx].ends_with("four") {
-                            Some(4)
-                        } else {
-                            None
-                        }
-                    }
-                    'x' => {
-                        if line[..=idx].ends_with("six") {
-                            Some(6)
-                        } else {
-                            None
-                        }
-                    }
-                    'n' => {
-                        if line[..=idx].ends_with("seven") {
-                            Some(7)
-                        } else {
-                            None
-                        }
-                    }
-                    't' => {
-                        if line[..=idx].ends_with("eight") {
-                            Some(8)
-                        } else {
-                            None
-                        }
-                    }
-                    _ => None,
+                    None
                 })
                 .unwrap();
             first * 10 + last
