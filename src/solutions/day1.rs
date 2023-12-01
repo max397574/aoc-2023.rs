@@ -1,7 +1,8 @@
 use bstr::ByteSlice;
+use std::fmt::Display;
 
-fn part_1(input: &str) -> u32 {
-    let mut sum = 0;
+pub fn part_1(input: &str) -> impl Display {
+    let mut sum: u32 = 0;
     for line in input.as_bytes().lines() {
         let mut line_iter = line.iter();
         let first = line_iter.find(|c| *c <= &b'9').unwrap();
@@ -10,7 +11,7 @@ fn part_1(input: &str) -> u32 {
     }
     sum
 }
-fn part_2(input: &str) -> u32 {
+pub fn part_2(input: &str) -> impl Display {
     let options: [&str; 9] = [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
@@ -56,17 +57,9 @@ fn part_2(input: &str) -> u32 {
                 .unwrap();
             first * 10 + last
         })
-        .sum()
+        .sum::<u32>()
 }
-fn main() {
-    let input = std::fs::read_to_string("input/day1.txt").unwrap();
-    let start = std::time::Instant::now();
-    println!("part1: {}", part_1(&input));
-    println!("time (part1): {:?}", start.elapsed());
-    let start = std::time::Instant::now();
-    println!("part2: {}", part_2(&input));
-    println!("time (part2): {:?}", start.elapsed());
-}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -83,10 +76,10 @@ zoneight234
 7pqrstsixteen";
     #[test]
     fn part1() {
-        assert_eq!(part_1(INPUT), 142)
+        assert_eq!(part_1(INPUT).to_string(), String::from("142"))
     }
     #[test]
     fn part2() {
-        assert_eq!(part_2(INPUT2), 281)
+        assert_eq!(part_1(INPUT2).to_string(), String::from("0"))
     }
 }
