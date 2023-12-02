@@ -1,82 +1,72 @@
-use bstr::ByteSlice;
+use atoi::atoi;
 
 pub fn part_1(input: &str) -> impl std::fmt::Display {
-    const MAX_RED: u32 = 12;
-    const MAX_GREEN: u32 = 13;
-    const MAX_BLUE: u32 = 14;
-    const RED_BYTES: &[u8] = b"red";
-    const GREEN_BYTES: &[u8] = b"green";
-    const BLUE_BYTES: &[u8] = b"blue";
     let mut sum = 0;
     let mut id = 0;
-    for line in input.as_bytes().lines() {
-        id += 1;
-        let mut id_cube_split = line.split_str(":");
-        id_cube_split.next();
-        let mut valid = true;
-        for cubes in id_cube_split
-            .next()
-            .unwrap()
-            .split(|&char| char == b';' || char == b',')
-        {
-            let mut split = cubes.trim().split_str(" ");
-            let num: u32 = split
-                .next()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .parse::<u32>()
-                .unwrap();
+    let mut valid = true;
+    let mut split = input.as_bytes().split(|&byte| byte == b' ');
+    loop {
+        let Some(block) = split.next() else {
+            if valid {
+                sum += id;
+            }
+            break;
+        };
+
+        if block[block.len() - 1] == b':' {
+            if valid {
+                sum += id;
+            }
+            id += 1;
+            valid = true;
+            continue;
+        }
+
+        if block[0] <= b'9' {
+            let val = atoi::<u8>(block).unwrap();
+            let color = split.next().unwrap();
             valid = valid
-                && match split.next().unwrap() {
-                    RED_BYTES => num <= MAX_RED,
-                    GREEN_BYTES => num <= MAX_GREEN,
-                    BLUE_BYTES => num <= MAX_BLUE,
+                && match color[0] {
+                    b'r' => val <= 12,
+                    b'g' => val <= 13,
+                    b'b' => val <= 14,
                     _ => unreachable!(),
                 }
-        }
-        if valid {
-            sum += id;
         }
     }
     sum
 }
 
 pub fn part_2(input: &str) -> impl std::fmt::Display {
-    let mut max_red: u32;
-    let mut max_green: u32;
-    let mut max_blue: u32;
-    const RED_BYTES: &[u8] = b"red";
-    const GREEN_BYTES: &[u8] = b"green";
-    const BLUE_BYTES: &[u8] = b"blue";
+    let mut max_red: u32 = 0;
+    let mut max_green: u32 = 0;
+    let mut max_blue: u32 = 0;
     let mut sum = 0;
-    for line in input.as_bytes().lines() {
-        max_red = 0;
-        max_green = 0;
-        max_blue = 0;
-        let mut id_cube_split = line.split_str(":");
-        id_cube_split.next();
-        for cubes in id_cube_split
-            .next()
-            .unwrap()
-            .split(|&char| char == b';' || char == b',')
-        {
-            let mut split = cubes.trim().split_str(" ");
-            let num: u32 = split
-                .next()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .parse::<u32>()
-                .unwrap();
-            match split.next().unwrap() {
-                RED_BYTES => max_red = max_red.max(num),
-                GREEN_BYTES => max_green = max_green.max(num),
-                BLUE_BYTES => max_blue = max_blue.max(num),
+    let mut split = input.as_bytes().split(|&byte| byte == b' ');
+    loop {
+        let Some(block) = split.next() else {
+            sum += max_red + max_blue + max_green;
+            break;
+        };
+
+        if block[block.len() - 1] == b':' {
+            sum += max_red + max_blue + max_green;
+            max_red = 0;
+            max_green = 0;
+            max_blue = 0;
+            continue;
+        }
+
+        if block[0] <= b'9' {
+            let val = atoi::<u32>(block).unwrap();
+            let color = split.next().unwrap();
+            match color[0] {
+                b'r' => max_red = max_red.max(val),
+                b'g' => max_green = max_green.max(val),
+                b'b' => max_blue = max_blue.max(val),
                 _ => unreachable!(),
             }
         }
-        sum += max_green * max_red * max_blue;
     }
     sum
 }
