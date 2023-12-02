@@ -42,8 +42,43 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
     sum
 }
 
-pub fn part_2(_input: &str) -> impl std::fmt::Display {
-    0
+pub fn part_2(input: &str) -> impl std::fmt::Display {
+    let mut max_red: u32;
+    let mut max_green: u32;
+    let mut max_blue: u32;
+    const RED_BYTES: &[u8] = b"red";
+    const GREEN_BYTES: &[u8] = b"green";
+    const BLUE_BYTES: &[u8] = b"blue";
+    let mut sum = 0;
+    for line in input.as_bytes().lines() {
+        max_red = 0;
+        max_green = 0;
+        max_blue = 0;
+        let mut id_cube_split = line.split_str(":");
+        id_cube_split.next();
+        for cubes in id_cube_split
+            .next()
+            .unwrap()
+            .split(|&char| char == b';' || char == b',')
+        {
+            let mut split = cubes.trim().split_str(" ");
+            let num: u32 = split
+                .next()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .parse::<u32>()
+                .unwrap();
+            match split.next().unwrap() {
+                RED_BYTES => max_red = max_red.max(num),
+                GREEN_BYTES => max_green = max_green.max(num),
+                BLUE_BYTES => max_blue = max_blue.max(num),
+                _ => unreachable!(),
+            }
+        }
+        sum += max_green * max_red * max_blue;
+    }
+    sum
 }
 
 #[cfg(test)]
@@ -67,6 +102,6 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
 
     #[test]
     fn part2() {
-        assert_eq!(part_2(_INPUT2).to_string(), String::from("0"))
+        assert_eq!(part_2(_INPUT2).to_string(), String::from("2286"))
     }
 }
