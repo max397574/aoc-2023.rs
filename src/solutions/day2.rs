@@ -49,12 +49,12 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
     let mut split = input.as_bytes().split(|&byte| byte == b' ');
     loop {
         let Some(block) = split.next() else {
-            sum += max_red + max_blue + max_green;
+            sum += max_red * max_blue * max_green;
             break;
         };
 
         if block[block.len() - 1] == b':' {
-            sum += max_red + max_blue + max_green;
+            sum += max_red * max_blue * max_green;
             max_red = 0;
             max_green = 0;
             max_blue = 0;
