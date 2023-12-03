@@ -3,35 +3,39 @@ use atoi::atoi;
 pub fn part_1(input: &str) -> impl std::fmt::Display {
     let mut sum = 0;
     let mut id = 0;
-    let mut valid = true;
+    // let mut valid = true;
     let mut split = input.as_bytes().split(|&byte| byte == b' ');
+    let mut red = 0;
+    let mut green = 0;
+    let mut blue = 0;
     loop {
         let Some(block) = split.next() else {
-            if valid {
+            if red <= 12 && green <= 13 && blue <= 14  {
                 sum += id;
             }
             break;
         };
 
         if block[block.len() - 1] == b':' {
-            if valid {
+            if red <= 12 && green <= 13 && blue <= 14 {
                 sum += id;
             }
             id += 1;
-            valid = true;
+            red = 0;
+            green = 0;
+            blue = 0;
             continue;
         }
 
         if block[0] <= b'9' {
             let val = atoi::<u8>(block).unwrap();
             let color = split.next().unwrap();
-            valid = valid
-                && match color[0] {
-                    b'r' => val <= 12,
-                    b'g' => val <= 13,
-                    b'b' => val <= 14,
-                    _ => unreachable!(),
-                }
+            match color[0] {
+                b'r' => red = red.max(val),
+                b'g' => green = green.max(val),
+                b'b' => blue = blue.max(val),
+                _ => unreachable!(),
+            }
         }
     }
     sum
