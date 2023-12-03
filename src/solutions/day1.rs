@@ -26,15 +26,17 @@ pub fn part_2(input: &str) -> impl Display {
             let first: u8 = line
                 .iter()
                 .enumerate()
-                .find_map(|(idx, char)| {
-                    if char <= &b'9' {
+                .find_map(|(idx, &char)| {
+                    if char <= b'9' {
                         return Some(char - b'0');
                     }
-                    if *char > b'f' && *char < b'n' {
+
+                    if char > b'f' && char < b'n' {
                         return None;
                     }
+
                     for (index, option) in OPTIONS.iter().enumerate() {
-                        if char == &option[1] && line[idx..].starts_with(option) {
+                        if char == option[0] && line[idx..].starts_with(option) {
                             return Some((index + 1) as u8);
                         }
                     }
@@ -45,16 +47,19 @@ pub fn part_2(input: &str) -> impl Display {
                 .iter()
                 .rev()
                 .enumerate()
-                .find_map(|(idx, char)| {
-                    if char <= &b'9' {
+                .find_map(|(idx, &char)| {
+                    if char <= b'9' {
                         return Some(char - b'0');
                     }
-                    if (*char > b'e' && *char < b'n') || (*char < b'e' && *char > b'9') {
+
+                    if (char > b'e' && char < b'n') || (char < b'e' && char > b'9') {
                         return None;
                     }
 
                     for (index, option) in OPTIONS.iter().enumerate() {
-                        if char == option.iter().last().unwrap() && line[..=idx].ends_with(option) {
+                        if char == option[option.len() - 1]
+                            && line[..(line.len() - idx)].ends_with(option)
+                        {
                             return Some((index + 1) as u8);
                         }
                     }
