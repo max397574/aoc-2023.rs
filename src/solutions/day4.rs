@@ -3,10 +3,10 @@ use bstr::ByteSlice;
 
 pub fn part_1(input: &str) -> impl std::fmt::Display {
     let mut score = 0;
-    for line in input.as_bytes().lines() {
-        let mut winning_numbers: u128 = 0;
-        let mut numbers_you_have: u128 = 0;
-        let mut getting_winning_numbers = true;
+    let input = input.as_bytes();
+    let numbers_per_line = ((input.find_byte(b'\n').unwrap() - 9) / 3) as u32;
+    for line in input.lines() {
+        let mut numbers: u128 = 0;
         for block in line.split(|&byte| byte == b' ') {
             if block.is_empty() {
                 continue;
@@ -14,33 +14,25 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
             if block[0] == b'C' {
                 continue;
             }
-            if block.len() == 2 && block[1] == b':' {
+            if block[block.len() - 1] == b':' || block[0] == b'|' {
                 continue;
             }
-            if block[0] == b'|' {
-                getting_winning_numbers = false;
-                continue;
-            }
-            if getting_winning_numbers {
-                winning_numbers |= 1 << atoi::<u8>(block).unwrap();
-            } else {
-                numbers_you_have |= 1 << atoi::<u8>(block).unwrap();
-            }
+
+            numbers |= 1 << atoi::<u8>(block).unwrap();
         }
-        let matches = (winning_numbers & numbers_you_have).count_ones();
-        if matches != 0 {
-            score += 1 << (matches - 1);
-        }
+        // HACK: total amount of numbers - count ones will give the amount of
+        // duplicated because there are no duplicates in input
+        score += (1 << (numbers_per_line - numbers.count_ones())) >> 1;
     }
     score
 }
 
 pub fn part_2(input: &str) -> impl std::fmt::Display {
-    let mut matching_numbers = Vec::new();
-    for line in input.as_bytes().lines() {
-        let mut winning_numbers: u128 = 0;
-        let mut numbers_you_have: u128 = 0;
-        let mut getting_winning_numbers = true;
+    let mut matching_numbers = [1; 218];
+    let input = input.as_bytes();
+    let numbers_per_line = ((input.find_byte(b'\n').unwrap() - 9) / 3) as u32;
+    for (idx, line) in input.lines().enumerate() {
+        let mut numbers: u128 = 0;
         for block in line.split(|&byte| byte == b' ') {
             if block.is_empty() {
                 continue;
@@ -48,30 +40,25 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
             if block[0] == b'C' {
                 continue;
             }
-            if block[block.len() - 1] == b':' {
+            if block[block.len() - 1] == b':' || block[0] == b'|' {
                 continue;
             }
-            if block[0] == b'|' {
-                getting_winning_numbers = false;
-                continue;
-            }
-            if getting_winning_numbers {
-                winning_numbers |= 1 << atoi::<u8>(block).unwrap();
-            } else {
-                numbers_you_have |= 1 << atoi::<u8>(block).unwrap();
-            }
+
+            numbers |= 1 << atoi::<u8>(block).unwrap();
         }
-        matching_numbers.push((winning_numbers & numbers_you_have).count_ones());
+        // HACK: total amount of numbers - count ones will give the amount of
+        // duplicated because there are no duplicates in input
+        matching_numbers[idx] = numbers_per_line - numbers.count_ones();
     }
 
-    let mut copies = vec![1; matching_numbers.len()];
+    let mut copies = [1; 218];
+    let mut count = 0;
     for (idx, match_count) in matching_numbers.iter().enumerate() {
+        count += copies[idx];
         for i in 1..=*match_count {
             copies[idx + i as usize] += copies[idx];
         }
     }
-    let mut count = 0;
-    copies.iter().for_each(|x| count += x);
     count
 }
 
