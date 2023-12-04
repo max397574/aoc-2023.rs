@@ -3,9 +3,8 @@ use bstr::ByteSlice;
 
 fn get_grid(input: &[u8]) -> Vec<Vec<u8>> {
     let mut grid = Vec::new();
-    let mut lines = input.lines();
-    let first = lines.next().unwrap();
-    let length = first.len();
+    let lines = input.lines();
+    let length = input.find_byte(b'\n').unwrap();
     grid.push(vec![b'.'; length + 2]);
     for line in lines {
         let mut new_line = Vec::new();
@@ -25,6 +24,9 @@ fn is_symbol(char: u8) -> bool {
 pub fn part_1(input: &str) -> impl std::fmt::Display {
     let mut sum = 0;
     let grid = get_grid(input.as_bytes());
+    for line in grid.iter() {
+        println!("{:?}", line.to_str().unwrap());
+    }
     for (idx, line) in grid.iter().enumerate().skip(1).rev().skip(1).rev() {
         let mut skip: usize = 0;
         while skip < line.len() {
@@ -32,10 +34,10 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
                 skip += 1;
                 continue;
             }
-            let mut num = [].as_slice();
             for (col, byte) in line.iter().enumerate().skip(skip) {
                 if !byte.is_ascii_digit() {
-                    num = &line[skip..col];
+                    let num = &line[skip..col];
+                    println!("{:?}", num.to_str().unwrap());
                     if is_symbol(line[skip - 1])
                         || is_symbol(line[col])
                         || grid[idx - 1]
@@ -51,6 +53,7 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
                             .skip(line.len() - col - 1)
                             .any(|b| is_symbol(*b))
                     {
+                        // println!("{:?}", num.to_str().unwrap());
                         sum += num.to_str().unwrap().parse::<u32>().unwrap();
                     }
                     skip += num.len();
