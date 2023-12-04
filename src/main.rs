@@ -20,6 +20,7 @@ pub fn main() {
         let mut total = Duration::ZERO;
         const WARMUPS: u8 = 3;
         const SECONDS: u64 = 5;
+        let bench_solution = &solutions::get_bench_solutions()[day - 1][part - 1];
         let duration = Duration::from_secs(SECONDS);
         for _ in 0..WARMUPS {
             let _ = solution(&input);
@@ -27,9 +28,7 @@ pub fn main() {
         let first_start = Instant::now();
         let mut runs = 0;
         while first_start.elapsed() < duration {
-            let start = Instant::now();
-            let _ = solution(&input);
-            total += start.elapsed();
+            total += bench_solution(&input);
             runs += 1;
         }
         println!(

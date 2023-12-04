@@ -25,6 +25,44 @@ pub mod day6;
 pub mod day7;
 pub mod day8;
 pub mod day9;
+pub fn get_bench_solutions() -> Vec<[Box<dyn Fn(&str) -> std::time::Duration>; 2]> {
+    fn get_bench<D: Display + 'static>(
+        function: fn(&str) -> D,
+    ) -> Box<dyn Fn(&str) -> std::time::Duration> {
+        Box::new(move |input| {
+            let start = std::time::Instant::now();
+            let _ = function(input);
+            start.elapsed()
+        })
+    }
+    Vec::from([
+        [get_bench(day1::part_1), get_bench(day1::part_2)],
+        [get_bench(day2::part_1), get_bench(day2::part_2)],
+        [get_bench(day3::part_1), get_bench(day3::part_2)],
+        [get_bench(day4::part_1), get_bench(day4::part_2)],
+        [get_bench(day5::part_1), get_bench(day5::part_2)],
+        [get_bench(day6::part_1), get_bench(day6::part_2)],
+        [get_bench(day7::part_1), get_bench(day7::part_2)],
+        [get_bench(day8::part_1), get_bench(day8::part_2)],
+        [get_bench(day9::part_1), get_bench(day9::part_2)],
+        [get_bench(day10::part_1), get_bench(day10::part_2)],
+        [get_bench(day11::part_1), get_bench(day11::part_2)],
+        [get_bench(day12::part_1), get_bench(day12::part_2)],
+        [get_bench(day13::part_1), get_bench(day13::part_2)],
+        [get_bench(day14::part_1), get_bench(day14::part_2)],
+        [get_bench(day15::part_1), get_bench(day15::part_2)],
+        [get_bench(day16::part_1), get_bench(day16::part_2)],
+        [get_bench(day17::part_1), get_bench(day17::part_2)],
+        [get_bench(day18::part_1), get_bench(day18::part_2)],
+        [get_bench(day19::part_1), get_bench(day19::part_2)],
+        [get_bench(day20::part_1), get_bench(day20::part_2)],
+        [get_bench(day21::part_1), get_bench(day21::part_2)],
+        [get_bench(day22::part_1), get_bench(day22::part_2)],
+        [get_bench(day23::part_1), get_bench(day23::part_2)],
+        [get_bench(day24::part_1), get_bench(day24::part_2)],
+        [get_bench(day25::part_1), get_bench(day25::part_2)],
+    ])
+}
 
 pub fn get_solutions() -> Vec<[Box<dyn Fn(&str) -> String>; 2]> {
     fn get_string<D: Display + 'static>(function: fn(&str) -> D) -> Box<dyn Fn(&str) -> String> {
