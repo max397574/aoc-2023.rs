@@ -38,9 +38,9 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
 pub fn part_2(input: &str) -> impl std::fmt::Display {
     let mut matching_numbers = Vec::new();
     for line in input.as_bytes().lines() {
-        let mut line_score = 0;
+        let mut winning_numbers: u128 = 0;
+        let mut numbers_you_have: u128 = 0;
         let mut getting_winning_numbers = true;
-        let mut winning_numbers = Vec::new();
         for block in line.split(|&byte| byte == b' ') {
             if block.is_empty() {
                 continue;
@@ -48,7 +48,7 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
             if block[0] == b'C' {
                 continue;
             }
-            if block.len() == 2 && block[1] == b':' {
+            if block[block.len() - 1] == b':' {
                 continue;
             }
             if block[0] == b'|' {
@@ -56,17 +56,18 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
                 continue;
             }
             if getting_winning_numbers {
-                winning_numbers.push(block);
-            } else if winning_numbers.contains(&block) {
-                line_score += 1;
+                winning_numbers |= 1 << atoi::<u8>(block).unwrap();
+            } else {
+                numbers_you_have |= 1 << atoi::<u8>(block).unwrap();
             }
         }
-        matching_numbers.push(line_score);
+        matching_numbers.push((winning_numbers & numbers_you_have).count_ones());
     }
+
     let mut copies = vec![1; matching_numbers.len()];
     for (idx, match_count) in matching_numbers.iter().enumerate() {
         for i in 1..=*match_count {
-            copies[idx + i] += copies[idx];
+            copies[idx + i as usize] += copies[idx];
         }
     }
     let mut count = 0;
