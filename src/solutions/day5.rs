@@ -50,6 +50,7 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
     smallest
 }
 
+// TODO: for real input gave result one too high, figure out why
 pub fn part_2(input: &str) -> impl std::fmt::Display {
     let input = input.as_bytes();
     let mut lines = input.lines();
