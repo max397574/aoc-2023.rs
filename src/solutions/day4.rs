@@ -28,7 +28,7 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
 }
 
 pub fn part_2(input: &str) -> impl std::fmt::Display {
-    let mut matching_numbers = [1; 218];
+    let mut matching_numbers = Vec::new();
     let input = input.as_bytes();
     let numbers_per_line = ((input.find_byte(b'\n').unwrap() - 9) / 3) as u32;
     for (idx, line) in input.lines().enumerate() {
@@ -48,10 +48,11 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
         }
         // HACK: total amount of numbers - count ones will give the amount of
         // duplicated because there are no duplicates in input
-        matching_numbers[idx] = numbers_per_line - numbers.count_ones();
+        println!("{idx}");
+        matching_numbers.push(numbers_per_line - numbers.count_ones());
     }
 
-    let mut copies = [1; 218];
+    let mut copies = vec![1; matching_numbers.len()];
     let mut count = 0;
     for (idx, match_count) in matching_numbers.iter().enumerate() {
         count += copies[idx];
@@ -72,12 +73,7 @@ Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
 Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
 
-    const INPUT2: &str = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
-Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
-Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
-Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
-Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
-Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
+    const INPUT2: &str = INPUT1;
 
     #[test]
     fn part1() {
