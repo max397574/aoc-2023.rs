@@ -22,7 +22,7 @@ fn find_options(total_time: u64, minimal_distance: u64) -> u64 {
 pub fn part_1(input: &str) -> impl std::fmt::Display {
     let input = input.as_bytes();
     let mut lines = input.lines();
-    let times: Vec<_> = lines.next().unwrap()[11..]
+    let times = lines.next().unwrap()[11..]
         .split(|&b| b == b' ')
         .filter_map(|block| {
             if block.is_empty() {
@@ -30,9 +30,8 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
             } else {
                 Some(atoi::<u64>(block).unwrap())
             }
-        })
-        .collect();
-    let distances: Vec<_> = lines.next().unwrap()[11..]
+        });
+    let distances = lines.next().unwrap()[11..]
         .split(|&b| b == b' ')
         .filter_map(|block| {
             if block.is_empty() {
@@ -40,11 +39,10 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
             } else {
                 Some(atoi::<u64>(block).unwrap())
             }
-        })
-        .collect();
+        });
     let mut total_options = 1;
-    for (time, distance) in times.iter().zip(distances.iter()) {
-        let options = find_options(*time, *distance);
+    for (time, distance) in times.zip(distances) {
+        let options = find_options(time, distance);
         if options > 0 {
             total_options *= options;
         }
