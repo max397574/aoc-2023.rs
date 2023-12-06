@@ -5,6 +5,7 @@ use std::{
 };
 
 mod solutions;
+mod utils;
 
 pub fn main() {
     let mut args = args();
