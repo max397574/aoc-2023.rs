@@ -15,54 +15,51 @@ enum HandKind {
     HighCard,
 }
 
-fn has_count(count: u8, counts: &[u8]) -> bool {
-    counts.iter().any(|&c| c == count)
-}
-
 fn get_kind(hand: &(u32, [u8; 5]), jokers: bool) -> HandKind {
     const POSSIBLE_BYTES: &[u8; 13] = b"JAKQT98765432";
     const CARD_COUNT: usize = POSSIBLE_BYTES.len();
-    let mut counts = [0; CARD_COUNT];
+    let mut card_counts = [0; CARD_COUNT];
     for byte in hand.1 {
-        counts[POSSIBLE_BYTES.find_byte(byte).unwrap()] += 1;
+        card_counts[POSSIBLE_BYTES.find_byte(byte).unwrap()] += 1;
+    }
+    let mut counts = [0; 5];
+    for i in 1..=5 {
+        counts[i - 1] = card_counts.iter().filter(|&c| c == &i).count();
     }
 
-    if !jokers || counts[0] == 0 {
-        if counts.iter().any(|&c| c == 5) {
+    if !jokers || card_counts[0] == 0 {
+        if counts[4] == 1 {
             HandKind::FiveOfAKind
-        } else if counts.iter().any(|&c| c == 4) {
+        } else if counts[3] == 1 {
             HandKind::FourOfAKind
-        } else if counts.iter().any(|&c| c == 3) && counts.iter().any(|&c| c == 2) {
+        } else if counts[2] == 1 && counts[1] == 1 {
             HandKind::FullHouse
-        } else if counts.iter().any(|&c| c == 3) {
+        } else if counts[2] == 1 {
             HandKind::ThreeOfAKind
-        } else if counts.iter().filter(|&c| c == &2).count() == 2 {
+        } else if counts[1] == 2 {
             HandKind::TwoPairs
-        } else if counts.iter().any(|&c| c == 2) {
+        } else if counts[1] == 1 {
             HandKind::OnePair
         } else {
             HandKind::HighCard
         }
     } else {
-        let joker_count = counts[0];
-        let counts: &[u8; 12] = counts[1..].try_into().unwrap();
-        if has_count(4, counts)
-            || has_count(3, counts) && joker_count == 2
-            || has_count(2, counts) && joker_count == 3
-            || has_count(1, counts) && joker_count == 4
+        let joker_count = card_counts[0];
+        if counts[3] == 1
+            || counts[2] == 1 && joker_count == 2
+            || counts[1] == 1 && joker_count == 3
+            || counts[0] == 1 && joker_count == 4
             || joker_count == 5
         {
             HandKind::FiveOfAKind
-        } else if has_count(3, counts)
-            || has_count(2, counts) && joker_count == 2
-            || has_count(1, counts) && joker_count == 3
+        } else if counts[2] == 1
+            || counts[1] > 0 && joker_count == 2
+            || counts[0] > 0 && joker_count == 3
         {
             HandKind::FourOfAKind
-        } else if has_count(3, counts) && has_count(2, counts)
-            || counts.iter().filter(|&c| c == &2).count() == 2
-        {
+        } else if counts[2] == 1 && counts[1] == 1 || counts[1] == 2 {
             HandKind::FullHouse
-        } else if has_count(2, counts) || has_count(1, counts) && joker_count == 2 {
+        } else if counts[1] > 0 || counts[0] > 0 && joker_count == 2 {
             HandKind::ThreeOfAKind
         } else {
             HandKind::OnePair
