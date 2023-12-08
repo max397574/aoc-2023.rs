@@ -7,11 +7,8 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
     let numbers_per_line = ((input.find_byte(b'\n').unwrap() - 9) / 3) as u32;
     for line in input.lines() {
         let mut numbers: u128 = 0;
-        for block in line.split(|&byte| byte == b' ') {
+        for block in line[9..].split(|&byte| byte == b' ') {
             if block.is_empty() {
-                continue;
-            }
-            if block[0] == b'C' {
                 continue;
             }
             if block[block.len() - 1] == b':' || block[0] == b'|' {
