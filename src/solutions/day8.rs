@@ -22,8 +22,7 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
     loop {
         let new_node = match instructions[steps % instructions.len()] {
             b'L' => current_node.0,
-            b'R' => current_node.1,
-            _ => unreachable!(),
+            _ => current_node.1,
         };
         steps += 1;
         if new_node == *b"ZZZ" {
@@ -63,8 +62,7 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
         loop {
             let new_node = match instructions[cur_steps % instructions.len()] {
                 b'L' => current_node.0,
-                b'R' => current_node.1,
-                _ => unreachable!(),
+                _ => current_node.1,
             };
             cur_steps += 1;
             if new_node[2] == b'Z' {
