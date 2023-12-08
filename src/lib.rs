@@ -1,3 +1,5 @@
+use num_traits::PrimInt;
+
 pub fn grid<T>(text_block: &str, callback: impl Fn(char) -> T) -> Vec<Vec<T>> {
     text_block
         .lines()
@@ -5,11 +7,11 @@ pub fn grid<T>(text_block: &str, callback: impl Fn(char) -> T) -> Vec<Vec<T>> {
         .collect()
 }
 
-pub fn gcd(a: usize, b: usize) -> usize {
+pub fn gcd<T: PrimInt>(a: T, b: T) -> T {
     let mut a = a;
     let mut b = b;
     let mut c;
-    while b != 0 {
+    while b != T::from(0).unwrap() {
         c = a;
         a = b;
         b = c % b;
@@ -17,11 +19,11 @@ pub fn gcd(a: usize, b: usize) -> usize {
     a
 }
 
-pub fn single_lcm(a: usize, b: usize) -> usize {
+pub fn single_lcm<T: PrimInt>(a: T, b: T) -> T {
     (a * b) / gcd(a, b)
 }
 
-pub fn get_lcm(numbers: Vec<usize>) -> usize {
+pub fn get_lcm<T: PrimInt>(numbers: Vec<T>) -> T {
     let mut tmp_lcm = single_lcm(*numbers.first().unwrap(), *numbers.get(1).unwrap());
     for num in numbers.iter().skip(2) {
         tmp_lcm = single_lcm(tmp_lcm, *num);
