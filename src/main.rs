@@ -6,6 +6,7 @@ use std::{
 
 mod solutions;
 mod utils;
+mod aoc_helpers;
 
 pub fn main() {
     let mut args = args();
