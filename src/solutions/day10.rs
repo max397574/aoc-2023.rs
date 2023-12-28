@@ -1,8 +1,6 @@
 use crate::aoc_helpers::grid::*;
 
-pub fn part_1(input: &str) -> impl std::fmt::Display {
-    let mut distance = 0;
-    let grid = Grid::from_str(input, |((_, _), c)| c as u8);
+fn iterate_loop(grid: &Grid<u8>, mut callback: impl FnMut((usize, usize))) {
     let ((x, y), _) = grid.iter().find(|&((_, _), c)| *c == b'S').unwrap();
     let mut x = x as isize;
     let mut y = y as isize;
@@ -17,24 +15,27 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
     } else if matches!(grid.get_at_i((x, y + 1)), Some(b'|' | b'F' | b'7')) {
         dy = 1;
     } else {
-        panic!("Invalid input?");
+        panic!();
     }
     loop {
-        distance += 1;
+        callback((x as usize, y as usize));
         (x, y) = (x + dx, y + dy);
         (dx, dy) = match grid[(x, y)] {
-            b'-' => (dx, dy),
-            b'|' => (dx, dy),
-            b'L' => (dy, dx),
-            b'7' => (dy, dx),
-            b'J' => (-dy, -dx),
-            b'F' => (-dy, -dx),
+            b'-' | b'|' => (dx, dy),
+            b'L' | b'7' => (dy, dx),
+            b'J' | b'F' => (-dy, -dx),
             b'S' => {
                 break;
             }
-            _ => panic!("invalid"),
+            _ => panic!(),
         };
     }
+}
+
+pub fn part_1(input: &str) -> impl std::fmt::Display {
+    let mut distance = 0;
+    let grid = Grid::from_str(input, |((_, _), c)| c as u8);
+    iterate_loop(&grid, |(_, _)| distance += 1);
     distance / 2
 }
 
@@ -44,38 +45,9 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
         cells: vec![false; grid.cells.len()],
         width: grid.width,
     };
-    let ((x, y), _) = grid.iter().find(|&((_, _), c)| *c == b'S').unwrap();
-    let mut x = x as isize;
-    let mut y = y as isize;
-    let mut dx = 0;
-    let mut dy = 0;
-    if matches!(grid.get_at_i((x - 1, y)), Some(b'-' | b'L' | b'F')) {
-        dx = -1;
-    } else if matches!(grid.get_at_i((x + 1, y)), Some(b'-' | b'J' | b'7')) {
-        dx = 1;
-    } else if matches!(grid.get_at_i((x, y - 1)), Some(b'|' | b'L' | b'J')) {
-        dy = -1;
-    } else if matches!(grid.get_at_i((x, y + 1)), Some(b'|' | b'F' | b'7')) {
-        dy = 1;
-    } else {
-        panic!("Invalid input?");
-    }
-    loop {
-        seen.cells[y as usize * seen.width + x as usize] = true;
-        (x, y) = (x + dx, y + dy);
-        (dx, dy) = match grid[(x, y)] {
-            b'-' => (dx, dy),
-            b'|' => (dx, dy),
-            b'L' => (dy, dx),
-            b'7' => (dy, dx),
-            b'J' => (-dy, -dx),
-            b'F' => (-dy, -dx),
-            b'S' => {
-                break;
-            }
-            _ => panic!("invalid"),
-        };
-    }
+    iterate_loop(&grid, |(x, y)| {
+        seen.cells[y * seen.width + x] = true;
+    });
     let mut count = 0;
     let mut inside;
     for row in 0..(seen.cells.len() / seen.width) {
