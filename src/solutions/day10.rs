@@ -50,7 +50,7 @@ pub fn part_2(input: &str) -> impl std::fmt::Display {
     });
     let mut count = 0;
     let mut inside;
-    for row in 0..(seen.cells.len() / seen.width) {
+    for row in 0..seen.height() {
         inside = false;
         for col in 0..seen.width {
             if *seen.get_at((col, row)).unwrap() {
