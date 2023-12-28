@@ -1,8 +1,7 @@
-use std::ops::IndexMut;
-
+#[derive(Debug)]
 pub struct Grid<T> {
-    cells: Vec<T>,
-    width: usize,
+    pub cells: Vec<T>,
+    pub width: usize,
 }
 
 impl<T> Grid<T> {
