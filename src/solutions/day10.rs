@@ -39,7 +39,31 @@ pub fn part_1(input: &str) -> impl std::fmt::Display {
     distance / 2
 }
 
+fn shoelace(vertices: &[(usize, usize)]) -> f64 {
+    let mut sum = 0;
+    let len = vertices.len();
+    for i in 0..len - 1 {
+        sum += vertices[i].0 * vertices[i + 1].1;
+        sum -= vertices[i].1 * vertices[i + 1].0;
+    }
+
+    sum += vertices[len - 1].0 * vertices[0].1;
+    sum -= vertices[len - 1].1 * vertices[0].0;
+
+    0.5 * (sum as f64).abs()
+}
+
+// pub fn part_2_picks_shoelace(input: &str) -> impl std::fmt::Display {
 pub fn part_2(input: &str) -> impl std::fmt::Display {
+    let grid = Grid::from_str(input, |((_, _), c)| c as u8);
+    let mut vertices = Vec::new();
+    iterate_loop(&grid, |(x, y)| vertices.push((x, y)));
+    shoelace(&vertices) - (vertices.len() / 2) as f64 + 1.0
+    // count
+}
+
+pub fn part_2_rays(input: &str) -> impl std::fmt::Display {
+// pub fn part_2(input: &str) -> impl std::fmt::Display {
     let grid = Grid::from_str(input, |((_, _), c)| c as u8);
     let mut seen = Grid {
         cells: vec![false; grid.cells.len()],
